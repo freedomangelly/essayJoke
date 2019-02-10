@@ -125,7 +125,7 @@ public class ViewUtils {
                 method.invoke(object, view);
             } catch (Exception e) {
                 try {
-                    method.invoke(object, null);
+//                    method.invoke(object, null);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
