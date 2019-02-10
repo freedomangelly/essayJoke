@@ -1,37 +1,55 @@
 package com.android.essayjoke;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.baselibrary.ioc.CheckNet;
+import com.android.baselibrary.base.BaseActivity;
 import com.android.baselibrary.ioc.OnClick;
 import com.android.baselibrary.ioc.ViewById;
-import com.android.baselibrary.ioc.ViewUtils;
+import com.android.fragmentlibrary.BaseSkipActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseSkipActivity {
+
+    private int mPage = 0;
+    /****Hello World!****/
     @ViewById(R.id.test_tv)
-    TextView textView;
+    private TextView mTestTv;
+    @ViewById(R.id.test_iv)
+    private ImageView mTestIv;
 
-    private int mPage=0;
 
+
+
+    @OnClick(R.id.test_tv)
+    private void testTvClick(TextView testTv) {
+    }
+
+    @OnClick(R.id.test_iv)
+    private void testIvClick(ImageView testIv) {
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ViewUtils.inject(MainActivity.this);
-        textView.setText("IOCTV");
+    public void setContentView() {
+
     }
 
-    @CheckNet(R.id.test_tv)
-    @OnClick({R.id.test_tv,R.id.test_iv})
-    private void onClick(View view){
-        Toast.makeText(this,"1111111111", Toast.LENGTH_SHORT).show();
+    @Override
+    public void initTitle() {
+
     }
 
+    @Override
+    public void initView() {
 
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+    @Override
+    public void initListener() {
+
+    }
 }
