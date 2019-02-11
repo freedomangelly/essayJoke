@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 
 import com.alipay.euler.andfix.patch.PatchManager;
 import com.android.baselibrary.ExceptionCrashHandle;
+import com.android.essayjoke.fixBug.FixDexManager;
 
 /**
  * Created by freed on 2019/2/10.
@@ -17,11 +18,17 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ExceptionCrashHandle.getInstance().init(this);
-        mPatchManager=new PatchManager(this);
-        mPatchManager.init(getLocalVersionName(this));
-        //加载之前的path包
-        mPatchManager.loadPatch();
+//        ExceptionCrashHandle.getInstance().init(this);
+//        mPatchManager=new PatchManager(this);
+//        mPatchManager.init(getLocalVersionName(this));
+//        //加载之前的path包
+//        mPatchManager.loadPatch();
+        FixDexManager fixDexManager=new FixDexManager(this);
+        try {
+            fixDexManager.loadFixDex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -55,4 +62,5 @@ public class BaseApplication extends Application {
         }
         return localVersion;
     }
+
 }
