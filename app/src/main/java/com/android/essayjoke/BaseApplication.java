@@ -3,11 +3,11 @@ package com.android.essayjoke;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 
 import com.alipay.euler.andfix.patch.PatchManager;
-import com.android.baselibrary.ExceptionCrashHandle;
-import com.android.essayjoke.fixBug.FixDexManager;
+import com.android.baselibrary.fixBug.FixDexManager;
+import com.android.baselibrary.http.HttpUtils;
+import com.android.baselibrary.http.OkHttpEngine;
 
 /**
  * Created by freed on 2019/2/10.
@@ -29,6 +29,7 @@ public class BaseApplication extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        HttpUtils.init(new OkHttpEngine());
     }
 
     /**

@@ -1,30 +1,39 @@
 package com.android.essayjoke;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.baselibrary.ExceptionCrashHandle;
-import com.android.baselibrary.base.BaseActivity;
 import com.android.baselibrary.dialog.AlertDialog;
+import com.android.baselibrary.http.EngineCallBack;
+import com.android.baselibrary.http.HttpUtils;
+import com.android.baselibrary.http.OkHttpEngine;
 import com.android.baselibrary.ioc.OnClick;
 import com.android.baselibrary.ioc.ViewById;
-import com.android.essayjoke.fixBug.FixDexManager;
+import com.android.baselibrary.fixBug.FixDexManager;
+import com.android.essayjoke.mode.DiscoverListResult;
 import com.android.fragmentlibrary.BaseSkipActivity;
+import com.android.fragmentlibrary.DefaultNavigationBar;
+import com.android.fragmentlibrary.HttpCallback;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.annotation.Target;
+import java.util.Map;
 
 public class MainActivity extends BaseSkipActivity {
 
+    private static final String TAG ="MainActivity" ;
     private int mPage = 0;
     /****Hello World!****/
     @ViewById(R.id.test_tv)
@@ -51,6 +60,17 @@ public class MainActivity extends BaseSkipActivity {
 
     @Override
     public void initTitle() {
+        DefaultNavigationBar navigationBar = new DefaultNavigationBar.Builder(this, (ViewGroup) findViewById(R.id.activity_main))
+                        .setTitle("标题")
+                        .setRightText("发布")
+                        .setRightListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(MainActivity.this,"发布成功",Toast.LENGTH_SHORT).show();
+                            }
+                        })
+//                        .setRightIcon(R.id.account_icon_weibo)
+                        .builer();
 
 
     }
@@ -63,7 +83,45 @@ public class MainActivity extends BaseSkipActivity {
     @Override
     public void initData() {
 //        aliPayHotModify();
-        fixDexBug();
+//        fixDexBug();
+//        HttpUtils httpUtils=new HttpUtils(this);
+//        httpUtils.exchangeEnine(new OkHttpEngine());
+//        new HttpUtils().get("", null, new EngineCallBack<BaseModel>() {
+//            @Override
+//            public void onError(Exception e) {
+//
+//            }
+//
+//            @Override
+//            public void onSuccess(BaseModel result) {
+//
+//            }
+//        });
+        String uuu="http://is.snssdk.com/2/essay/discovery/v3/?iid=61525517598&channel360&aid=7&app_name=joke_essay&version_name=5.7.0&ac=wifi&device_id=30036118478&device_brand=Xiaomi&update_version_code=5701&manifest_version_code=570&longitude=133.000366&latitude=28.171377&device_platform=android";
+        HttpUtils
+                .with(this)
+                .url("http://is.snssdk.com/2/essay/discovery/v3/?")
+                .addParam("iid","61525517598")
+//                .exchangeEngine(new OkHttpEngine())//切换引擎
+                .get()
+                .execute(new HttpCallback<DiscoverListResult>() {
+        //路径 apk 都需要放到jni
+
+        @Override
+        public void onError(Exception e) {
+
+        }
+
+        @Override
+        public void onSuccess(DiscoverListResult result) {
+//            Gson gson = new Gson();
+//            DiscoverListResult discoverListResult=gson.fromJson(result,DiscoverListResult.class);
+//            //显示列表
+//
+//            Log.e("TAG",result);
+            Log.i(TAG,"name -- >"+result.getData().getCategories().getName());
+        }
+    });
     }
 
     private void fixDexBug() {

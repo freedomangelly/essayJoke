@@ -1,9 +1,7 @@
-package com.android.essayjoke.fixBug;
+package com.android.baselibrary.fixBug;
 
 import android.content.Context;
 import android.util.Log;
-
-import com.android.baselibrary.ExceptionCrashHandle;
 
 import java.io.File;
 import java.io.FileInputStream;

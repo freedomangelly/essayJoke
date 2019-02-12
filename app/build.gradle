@@ -38,4 +38,5 @@ dependencies {
     implementation project(':baselibrary')
     implementation project(':fragmentlibrary')
     implementation 'com.alipay.euler:andfix:0.5.0@aar'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
