@@ -169,4 +169,14 @@ public class SkinManager {
             skinView.skin();
         }
     }
+
+    /**
+     * 防止内存泄漏
+     * @param skinChangeListener
+     */
+    public void unregister(ISkinChangeListener skinChangeListener) {
+        mSkinViews.remove(skinChangeListener);
+
+    }
+
 }

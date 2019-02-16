@@ -1,6 +1,7 @@
 package com.android.essayjoke;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -37,7 +38,12 @@ public class MainActivity2 extends BaseSkipActivity {
 
     @Override
     public void initData() {
-
+        startService(new Intent(this,MessageService.class));
+        startService(new Intent(this,GuardService.class));
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            //必须大于5.0
+            startService(new Intent(this,JobWakeUpServers.class));
+        }
     }
 
     @Override

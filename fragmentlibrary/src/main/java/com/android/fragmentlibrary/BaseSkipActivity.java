@@ -133,4 +133,10 @@ public abstract class BaseSkipActivity extends BaseActivity implements ISkinChan
     public void changeSkin(SkinResource skinResource) {
 
     }
+
+    @Override
+    protected void onDestroy() {
+        SkinManager.getInstance().unregister(this);
+        super.onDestroy();
+    }
 }
