@@ -1,10 +1,12 @@
 package com.android.baselibrary.http;
 
 import android.content.Context;
-import android.util.ArrayMap;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,10 @@ public class HttpUtils{
     private Context mContext;
 
     private Map<String,Object> mParams;
+    /**
+     * 是否读取缓存
+     */
+    private boolean mCache=false;
 
     private HttpUtils(Context context){
         mContext=context;
@@ -50,6 +56,10 @@ public class HttpUtils{
         mType=GET_TYPE;
         return this;
     }
+    public HttpUtils cache(boolean isCache){
+        mCache=isCache;
+        return this;
+    }
 
     //添加参数
     public HttpUtils addParam(String key,Object value){
@@ -68,7 +78,7 @@ public class HttpUtils{
         //1.baseLibrary里面这里不要包含业务逻辑
         //2.如果每一个项目，多条业务线
         //3让callBack回调
-        callBack.onPreExecute(mContext,mParams);
+//        callBack.onPreExecute(mContext,mParams);
         if(callBack==null){
             callBack=Defualt_call_back;
         }
@@ -84,7 +94,7 @@ public class HttpUtils{
     }
 
     //默认OkHttpEngine
-    private static IHttpEngine mHttpEngine=new OkHttpEngine();
+    private static IHttpEngine mHttpEngine=null;
 
     public static void init(IHttpEngine httpEngine){
         mHttpEngine=httpEngine;
@@ -98,11 +108,11 @@ public class HttpUtils{
 
     }
     private void get(String url, Map<String, Object> params, EngineCallBack callBack) {
-        mHttpEngine.get(mContext,url,params,callBack);
+        mHttpEngine.get(mCache,mContext,url,params,callBack);
     }
 
     private void post(String url, Map<String, Object> params, EngineCallBack callBack) {
-        mHttpEngine.post(mContext,url,params,callBack);
+        mHttpEngine.post(mCache,mContext,url,params,callBack);
     }
 
     public HttpUtils exchangeEngine(IHttpEngine httpEngine){
@@ -136,12 +146,6 @@ public class HttpUtils{
         return stringBuffer.toString();
     }
 
-    /**
-     * 解析一个类上面的class信息
-     */
-    public static Class<?> analysisClazzInfo(Object object) {
-        Type genType = object.getClass().getGenericSuperclass();
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        return (Class<?>) params[0];
-    }
+
+
 }

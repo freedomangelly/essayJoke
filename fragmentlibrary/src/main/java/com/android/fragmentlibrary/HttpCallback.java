@@ -1,6 +1,7 @@
 package com.android.fragmentlibrary;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.baselibrary.http.EngineCallBack;
 import com.android.baselibrary.http.HttpUtils;
@@ -37,12 +38,13 @@ public abstract class HttpCallback<T> implements EngineCallBack {
     }
 
     public void onSuccess(String result) {
-        Gson gson = new Gson();
-        T discoverListResult= (T) gson.fromJson(result, HttpUtils.analysisClazzInfo(this));
-        onSuccess(discoverListResult);
+        Log.i("info","result="+result);
+        //TODO 此处有问题 result返回对象不是String
+//        Gson gson = new Gson();
+//        T discoverListResult= (T) gson.fromJson(result, HttpUtils.analysisClazzInfo(this));
+//        onSuccess(discoverListResult);
     }
 
     //返回可以直接操作的对象
     public abstract void onSuccess(T result);
-
 }

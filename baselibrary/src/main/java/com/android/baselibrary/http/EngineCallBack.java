@@ -11,7 +11,7 @@ import java.util.Map;
 public interface EngineCallBack<T> {
     public void onPreExecute(Context context, Map<String,Object> params);
     //错误
-    public void onError(Exception e);
+    public void onError(Object e);
     //成功
     public void onSuccess(String result);
 
@@ -22,7 +22,7 @@ public interface EngineCallBack<T> {
         }
 
         @Override
-        public void onError(Exception e) {
+        public void onError(Object e) {
 
         }
 

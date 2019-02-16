@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * 头部的基类
+ * 头部的基类对标题栏进行再次的封装
+ * 使用泛型的目的是必须传入AbsNavigationParams的基类
  */
 
 public abstract class AbsNavigationBar<P extends AbsNavigationBar.Builder.AbsNavigationParams> implements INavigationBar {
@@ -43,7 +44,7 @@ public abstract class AbsNavigationBar<P extends AbsNavigationBar.Builder.AbsNav
     }
 
     /**
-     * 绑定和创建view
+     * 绑定标题栏布局并将它放在跟布局的顶部
      */
     private void createAndBindView() {
         if(mParams.mParent == null){

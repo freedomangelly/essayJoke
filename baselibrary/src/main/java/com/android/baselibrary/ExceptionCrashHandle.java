@@ -61,8 +61,17 @@ public class ExceptionCrashHandle implements Thread.UncaughtExceptionHandler{
         String crashFileName=saveInfoToSd(throwable);
         Log.e(TAG,crashFileName);
         cacheCrashFile(crashFileName);
+        throwable.printStackTrace();
 
-        mDefaultExceptionHandler.uncaughtException(thread,throwable);
+        new Thread(){
+            @Override
+            public void run() {
+                int i=2/0;
+            }
+        }.start();
+        //报错直接闪退
+//        mDefaultExceptionHandler.uncaughtException(thread,throwable);//注释此代码不会报错
+        android.os.Process.killProcess(android.os.Process.myPid()); //直接进入闪退
     }
 
     /**
