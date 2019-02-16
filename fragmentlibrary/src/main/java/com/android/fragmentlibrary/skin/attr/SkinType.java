@@ -35,7 +35,6 @@ public enum  SkinType {
         @Override
         public void skin(View mView, String mresNamne) {
             SkinResource skinResource=getSkinResource();
-
             Drawable drawable=skinResource.getDrawableByName(mresNamne);
             if(drawable!=null){
                 ImageView imageView = (ImageView) mView;

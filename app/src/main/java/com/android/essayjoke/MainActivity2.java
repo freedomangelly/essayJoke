@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.fragmentlibrary.BaseSkipActivity;
 import com.android.fragmentlibrary.skin.SkinManager;
+import com.android.fragmentlibrary.skin.SkinResource;
 
 import java.io.File;
 
@@ -46,6 +48,8 @@ public class MainActivity2 extends BaseSkipActivity {
     public void skin1(View view){
         //恢复默认
         int result=SkinManager.getInstance().restort();
+//        String skinPath= Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator+"red.skin2";
+//        int result = SkinManager.getInstance().loadSkin(skinPath);
     }
 
     public void skin(View view){
@@ -57,5 +61,11 @@ public class MainActivity2 extends BaseSkipActivity {
         //跳转
         Intent intent=new Intent(this,MainActivity2.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void changeSkin(SkinResource skinResource) {
+        super.changeSkin(skinResource);
+        Toast.makeText(MainActivity2.this,"换肤："+skinResource,Toast.LENGTH_SHORT).show();
     }
 }

@@ -32,7 +32,10 @@ public class SkinResource {
             AssetManager asset=AssetManager.class.newInstance();
             Method method=AssetManager.class.getDeclaredMethod("addAssetPath",String.class);
 
+            //反射执行方法写死了， 肯定是传进来的值
+
             method.invoke(asset, Environment.getExternalStorageDirectory().getAbsoluteFile()+ File.separator+"Red.skin");
+
             mSkinResource=new Resources(asset,superRes.getDisplayMetrics(),superRes.getConfiguration());
 
             //获取包名

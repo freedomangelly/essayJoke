@@ -19,8 +19,10 @@ import android.widget.TextView;
 import com.android.baselibrary.base.BaseActivity;
 import com.android.fragmentlibrary.skin.SkinAttrSupport;
 import com.android.fragmentlibrary.skin.SkinManager;
+import com.android.fragmentlibrary.skin.SkinResource;
 import com.android.fragmentlibrary.skin.attr.SkinAttr;
 import com.android.fragmentlibrary.skin.attr.SkinView;
+import com.android.fragmentlibrary.skin.callback.ISkinChangeListener;
 import com.android.fragmentlibrary.skin.support.SkinAppCompatViewInflater;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ import java.util.List;
  * Created by freed on 2019/2/10.
  */
 
-public abstract class BaseSkipActivity extends BaseActivity {
+public abstract class BaseSkipActivity extends BaseActivity implements ISkinChangeListener {
     private static final String TAG ="BaseSkipActivity" ;
     private SkinAppCompatViewInflater mAppCompatViewInflater;
     @Override
@@ -66,11 +68,14 @@ public abstract class BaseSkipActivity extends BaseActivity {
         if(view!=null){
             List<SkinAttr> skinArrAttrs=SkinAttrSupport.getSkinAttrs(context, attrs);
             SkinView skinView = new SkinView(view,skinArrAttrs);
-
+            //3.统一讲给skinmanager管理
             managerSkinView(skinView);
+
+            //判断一下要不要换肤
+            SkinManager.getInstance().checkChangeSkin(skinView);
         }
 
-        //3.统一讲给skinmanager管理
+
 
         return view;
     }
@@ -122,5 +127,10 @@ public abstract class BaseSkipActivity extends BaseActivity {
             }
             parent = parent.getParent();
         }
+    }
+
+    @Override
+    public void changeSkin(SkinResource skinResource) {
+
     }
 }
