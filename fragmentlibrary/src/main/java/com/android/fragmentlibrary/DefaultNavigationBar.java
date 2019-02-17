@@ -35,7 +35,11 @@ public class DefaultNavigationBar<D extends DefaultNavigationBar.Builder.Default
         setOnClickListener(R.id.right_text, getmParams().mRightClickListener);
         //左边要写一个默认的 finishActivity
         setOnClickListener(R.id.back, getmParams().mLeftClickListener);
+
+        setViewVisibility(R.id.back,getmParams().leftIconVisiable);
     }
+
+
 
     public static class Builder extends AbsNavigationBar.Builder {
 
@@ -78,6 +82,11 @@ public class DefaultNavigationBar<D extends DefaultNavigationBar.Builder.Default
             return this;
         }
 
+        public DefaultNavigationBar.Builder hideLeftIcon() {
+            P.leftIconVisiable = View.INVISIBLE;
+            return this;
+        }
+
 
         public static class DefaultNavigationParame extends AbsNavigationBar.Builder.AbsNavigationParams {
 
@@ -86,6 +95,7 @@ public class DefaultNavigationBar<D extends DefaultNavigationBar.Builder.Default
             public String mTitle;
             public String mRightText;
             public int mrightRes;
+            public int leftIconVisiable = View.VISIBLE;
 
             public View.OnClickListener mRightClickListener;
             public View.OnClickListener mLeftClickListener = new View.OnClickListener() {
