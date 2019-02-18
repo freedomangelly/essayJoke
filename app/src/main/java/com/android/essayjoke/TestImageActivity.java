@@ -1,13 +1,18 @@
 package com.android.essayjoke;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
+import com.android.essayjoke.utils.ImageUtil;
 import com.android.fragmentlibrary.BaseSkipActivity;
 import com.android.fragmentlibrary.selectimage.ImageSelector;
 import com.android.fragmentlibrary.selectimage.SelectImageActivity;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -66,6 +71,17 @@ public class TestImageActivity extends BaseSkipActivity {
                //做一下显示
                 Log.i("info",mImageList.toString());
             }
+        }
+    }
+
+    public void compressImg(View view){
+        for (String path : mImageList){
+            //做优化 第一个decodeFile有可能会内存溢出
+            //一般后台会规定尺寸 800
+//            Bitmap bitmap= BitmapFactory.decodeFile(path);
+            Bitmap bitmap= ImageUtil.decodeFile(path);
+            //调用native方法
+            ImageUtil.compressImage(bitmap,30, Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+new File(path).getName());
         }
     }
 }
