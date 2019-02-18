@@ -99,7 +99,7 @@ public class ExceptionCrashHandle implements Thread.UncaughtExceptionHandler{
         sb.append(obtainExceptionInfo(ex));
 
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            File dir=new File(mContext.getFilesDir()+File.separator+"crash"+File.separator);
+            File dir=new File(Environment.getExternalStorageDirectory()+File.separator+"crash"+File.separator);
             if(dir.exists()){
                 deleteDir(dir);
             }else {

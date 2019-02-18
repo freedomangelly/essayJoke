@@ -35,7 +35,7 @@ public class FindFragment extends BaseFragment implements BannerViewPager.Banner
 
     @Override
     protected void initView() {
-
+        Log.i("info","FindFragment.initView");
     }
 
     @Override
@@ -89,9 +89,9 @@ public class FindFragment extends BaseFragment implements BannerViewPager.Banner
         Log.e("TAG", "banners --> " + banners.size());
 
         // 后台没有轮播那就不添加
-        if(banners.size()<=0){
-            return;
-        }
+//        if(banners.size()<=0){
+//            return;
+//        }
 
         BannerView bannerView = (BannerView) LayoutInflater.from(context)
                 .inflate(R.layout.layout_banner_view, mRecyclerView, false);

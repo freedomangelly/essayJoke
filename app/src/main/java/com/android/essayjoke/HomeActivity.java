@@ -1,8 +1,11 @@
 package com.android.essayjoke;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.baselibrary.http.HttpUtils;
@@ -29,8 +32,7 @@ public class HomeActivity extends BaseSkipActivity {
 
     @Override
     public void initTitle() {
-        ViewGroup parent = (ViewGroup) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-        DefaultNavigationBar navigationBar = new DefaultNavigationBar.Builder(this, parent)
+        DefaultNavigationBar navigationBar = new DefaultNavigationBar.Builder(this)
                 .setTitle("首页")
                 .hideLeftIcon()
                 .builer();
@@ -56,11 +58,11 @@ public class HomeActivity extends BaseSkipActivity {
 
     @Override
     public void initListener() {
-
+        startActivity(new Intent(HomeActivity.this,TestImageActivity.class));
     }
 
     @OnClick(R.id.home_rb)
-    private void homeRbClick() {
+    private void homeRbClick(View view) {
         if (mHomeFragment == null) {
             mHomeFragment = new HomeFragment();
         }
@@ -68,7 +70,8 @@ public class HomeActivity extends BaseSkipActivity {
     }
 
     @OnClick(R.id.find_rb)
-    private void findRbClick() {
+    private void findRbClick(View view) {
+        Log.i("info","findRbClick");
         if (mFindFragment == null) {
             mFindFragment = new FindFragment();
         }
@@ -76,7 +79,7 @@ public class HomeActivity extends BaseSkipActivity {
     }
 
     @OnClick(R.id.new_rb)
-    private void newRbClick() {
+    private void newRbClick(View view) {
         if (mNewFragment == null) {
             mNewFragment = new NewFragment();
         }
@@ -84,7 +87,7 @@ public class HomeActivity extends BaseSkipActivity {
     }
 
     @OnClick(R.id.message_rb)
-    private void messageRbClick() {
+    private void messageRbClick(View view) {
         if (mMessageFragment == null) {
             mMessageFragment = new MessageFragment();
         }

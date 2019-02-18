@@ -49,7 +49,10 @@ public class DefaultNavigationBar<D extends DefaultNavigationBar.Builder.Default
             super(context, parent);
             P = new DefaultNavigationParame(context, parent);
         }
-
+        public Builder(Context context) {
+            super(context, null);
+            P = new DefaultNavigationParame(context, null);
+        }
         @Override
         public DefaultNavigationBar builer() {
             DefaultNavigationBar navigationBar = new DefaultNavigationBar(P);

@@ -31,7 +31,7 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-
+    Log.i("info","HomeFragment.initView");
     }
 
     @Override

@@ -63,7 +63,7 @@ public abstract class BaseSkipActivity extends BaseActivity implements ISkinChan
         View view=createView(parent, name, context, attrs);
 
         //2.解析属性 src textColor background 自定义属性
-        Log.e(TAG,view+"");
+//        Log.e(TAG,view+"");
         //2.1解析属性 src textColor background 自定义属性
         if(view!=null){
             List<SkinAttr> skinArrAttrs=SkinAttrSupport.getSkinAttrs(context, attrs);

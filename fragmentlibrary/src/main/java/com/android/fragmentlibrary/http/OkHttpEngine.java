@@ -1,6 +1,7 @@
 package com.android.fragmentlibrary.http;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -51,14 +52,16 @@ import static android.content.ContentValues.TAG;
  */
 
 public class OkHttpEngine implements IHttpEngine {
-    private String TAG="OkHttpEngine";
-    private static OkHttpClient mOkHttpClient=initHttpsClient();
+    private String TAG = "OkHttpEngine";
+    private static OkHttpClient mOkHttpClient = initHttpsClient();
+
+    private static Handler mHandle = new Handler();
 
     @Override
     public void post(boolean cache, Context context, String url, Map<String, Object> params, final EngineCallBack callBack) {
-        final String jointUrl= HttpUtils.jointParams(url,params);
-        Log.i(TAG,jointUrl);
-        RequestBody requestBody=appentBody(params);
+        final String jointUrl = HttpUtils.jointParams(url, params);
+        Log.i(TAG, jointUrl);
+        RequestBody requestBody = appentBody(params);
         final Request request =
 //                cache?new Request.Builder()
 //                .url(url)
@@ -67,51 +70,66 @@ public class OkHttpEngine implements IHttpEngine {
 //                .post(requestBody)
 //                .build():
                 new Request.Builder()
-                .url(url)
-                .tag(context)
-                .post(requestBody)
-                .build();
+                        .url(url)
+                        .tag(context)
+                        .post(requestBody)
+                        .build();
 
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                callBack.onError(e);
+            public void onFailure(Call call, final IOException e) {
+                mHandle.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "error");
+                        //执行成功方法
+                        callBack.onError(e);
+                    }
+                });
+
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String result=request.body().toString();
+                final String result = request.body().toString();
 
                 //获取数据之后会执行成功方法
 
                 //2.每次获取到的数据，先比对上一次内容
-                callBack.onSuccess(result);
+                mHandle.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "error");
+                        //执行成功方法
+                        callBack.onSuccess(result);
+                    }
+                });
             }
         });
 
     }
 
     private RequestBody appentBody(Map<String, Object> params) {
-        MultipartBody.Builder builder=new MultipartBody.Builder().setType(MultipartBody.FORM);
-        appParms(builder,params);
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        appParms(builder, params);
         return builder.build();
     }
 
     private void appParms(MultipartBody.Builder builder, Map<String, Object> params) {
-        if(params !=null && !params.isEmpty()){
-            for (String key : params.keySet()){
-                builder.addFormDataPart(key,params.get(key)+"");
-                Object value=params.get(key);
-                if(value instanceof File){
+        if (params != null && !params.isEmpty()) {
+            for (String key : params.keySet()) {
+                builder.addFormDataPart(key, params.get(key) + "");
+                Object value = params.get(key);
+                if (value instanceof File) {
                     //处理文件 -- >>object file
                     File file = (File) value;
-                    builder.addFormDataPart(key,file.getName(),RequestBody.create(MediaType.parse(guessMineType(file.getAbsolutePath())),file));
+                    builder.addFormDataPart(key, file.getName(), RequestBody.create(MediaType.parse(guessMineType(file.getAbsolutePath())), file));
 
-                }else if(value instanceof List){
+                } else if (value instanceof List) {
                     List<File> listFiles = (List<File>) value;
-                    for (int i=0;i<listFiles.size();i++){
-                        File file=listFiles.get(i);
-                        builder.addFormDataPart(key+i,file.getName(),RequestBody.create(MediaType.parse(guessMineType(file.getAbsolutePath())),file));
+                    for (int i = 0; i < listFiles.size(); i++) {
+                        File file = listFiles.get(i);
+                        builder.addFormDataPart(key + i, file.getName(), RequestBody.create(MediaType.parse(guessMineType(file.getAbsolutePath())), file));
                     }
                 }
             }
@@ -119,88 +137,100 @@ public class OkHttpEngine implements IHttpEngine {
     }
 
     private String guessMineType(String absolutePath) {
-        FileNameMap fileNameMap= URLConnection.getFileNameMap();
-        String contentTypeFor=fileNameMap.getContentTypeFor(absolutePath);
-        if(contentTypeFor==null){
-            contentTypeFor="application/octet-stream";
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+        String contentTypeFor = fileNameMap.getContentTypeFor(absolutePath);
+        if (contentTypeFor == null) {
+            contentTypeFor = "application/octet-stream";
         }
         return contentTypeFor;
     }
 
     @Override
     public void get(final boolean cache, Context context, String url, Map<String, Object> params, final EngineCallBack callBack) {
-            url=HttpUtils.jointParams(url,params);
+        url = HttpUtils.jointParams(url, params);
         final String finalUrl = url;
 
         final IDaoSoupport<CacheData> dataDaoSupport = DaoSupportFactory.getFactory().getDao(CacheData.class);
-            //1.判断需不需要缓存，然后判断有没有
-            if(cache){
-                //需要缓存,那缓存，问题又来了，OkHttpEngine BaseLibrary
-                //数据库缓存在FrameLibrary
-                String request = CacheDataUtil.getCacheResultJson(finalUrl);
+        //1.判断需不需要缓存，然后判断有没有
+        if (cache) {
+            //需要缓存,那缓存，问题又来了，OkHttpEngine BaseLibrary
+            //数据库缓存在FrameLibrary
+            String request = CacheDataUtil.getCacheResultJson(finalUrl);
 
 //                List<CacheData> cacheDatas=dataDaoSupport.querySupport().selection("mUrlKey=?").selectionArgs(MD5Utils.stringToMD5(finalUrl)).query();
 //                if(cacheDatas.size()!=0){
 //                    CacheData cacheData=cacheDatas.get(0);
 //                    String request=cacheData.getmResultJson();
-                    if(!TextUtils.isEmpty(request)){
-                        //代表数据库有缓存
-                        Log.i(TAG,"读到缓存");
-                        callBack.onSuccess(request);
-                        //TODO 此处是不是应该return
-                        return;
-                    }
+            if (!TextUtils.isEmpty(request)) {
+                //代表数据库有缓存
+                Log.i(TAG, "读到缓存");
+                callBack.onSuccess(request);
+                //TODO 此处是不是应该return
+                return;
+            }
 //                }
+        }
+
+
+        Log.i(TAG, url);
+        Request.Builder requestBuilder = new Request.Builder().url(url).tag(context);
+
+        requestBuilder.method("GET", null);
+        Request request = requestBuilder.build();
+        mOkHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                mHandle.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "error");
+                        e.printStackTrace();
+                        callBack.onError(e);
+                    }
+                });
+
             }
 
-
-            Log.i(TAG,url);
-            Request.Builder requestBuilder=new Request.Builder().url(url).tag(context);
-
-            requestBuilder.method("GET",null);
-            Request request=requestBuilder.build();
-            mOkHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.i(TAG,"error");
-                    e.printStackTrace();
-                    callBack.onError(e);
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String result=response.body().string();
-                    Log.i(TAG,"result="+result);
-                    Log.i(TAG,"result="+response.code());
-                    if(cache){
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String result = response.body().string();
+                Log.i(TAG, "result=" + result);
+                Log.i(TAG, "result=" + response.code());
+                if (cache) {
 //                        List<CacheData> cacheDatas=dataDaoSupport.querySupport().selection("mUrlKey=?").selectionArgs(MD5Utils.stringToMD5(finalUrl)).query();
 //                        if(cacheDatas.size()!=0){
 //                            CacheData cacheData=cacheDatas.get(0);
 //                            String cacheResult=cacheData.getmResultJson();
-                        String cacheResultJson=CacheDataUtil.getCacheResultJson(finalUrl);
-                            Log.i(TAG,"读到结果");
-                            if(!TextUtils.isEmpty(result)){
-                                //代表数据库有缓存
-                                if(result.equals(cacheResultJson)){
-                                    Log.i(TAG,"数据和缓存一致");
-                                    return;
-                                }
-                                //TODO 此处是不是应该return
-                            }
-//                        }
+                    String cacheResultJson = CacheDataUtil.getCacheResultJson(finalUrl);
+                    Log.i(TAG, "读到结果");
+                    if (!TextUtils.isEmpty(result)) {
+                        //代表数据库有缓存
+                        if (result.equals(cacheResultJson)) {
+                            Log.i(TAG, "数据和缓存一致");
+                            return;
+                        }
+                        //TODO 此处是不是应该return
                     }
+//                        }
+                }
+                mHandle.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i(TAG, "error");
+                        //执行成功方法
+                        callBack.onSuccess(result);
+                    }
+                });
 
-                    //执行成功方法
-                    callBack.onSuccess(result);
+                //缓存数据
+                if (cache) {
                     //缓存数据
-                    if(cache){
-                        //缓存数据
 //                        dataDaoSupport.delete("mUrlKey=?",new String[]{MD5Utils.stringToMD5(finalUrl)});
 //                        dataDaoSupport.insert(new CacheData(MD5Utils.stringToMD5(finalUrl),result));
-                        CacheDataUtil.cacheData(finalUrl,result);
-                    }
+                    CacheDataUtil.cacheData(finalUrl, result);
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -243,7 +273,7 @@ public class OkHttpEngine implements IHttpEngine {
     }
 
     private static OkHttpClient initHttpsClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder() .connectTimeout(30000L, TimeUnit.MILLISECONDS)
+        OkHttpClient.Builder builder = new OkHttpClient.Builder().connectTimeout(30000L, TimeUnit.MILLISECONDS)
                 .readTimeout(30000L, TimeUnit.MILLISECONDS)
 //                .addInterceptor(new LoggingInterceptor("OkHttpClient"))
                 .hostnameVerifier(new HostnameVerifier() {
@@ -252,10 +282,10 @@ public class OkHttpEngine implements IHttpEngine {
                         return true;
                     }
                 });
-        if(false){
+        if (false) {
             HttpsUtils.SSLParams sslParams = HttpsUtils.getSslSocketFactory(null, null, null);
             builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
-        }else{
+        } else {
             SSLContext sslContext = null;
             try {
                 sslContext = SSLContext.getInstance("TLS");
@@ -269,7 +299,7 @@ public class OkHttpEngine implements IHttpEngine {
             }
 
             SSLSocketFactory socketFactory = new Tls12SocketFactory(sslContext.getSocketFactory());
-            builder.sslSocketFactory(socketFactory,new HttpsUtils.UnSafeTrustManager());
+            builder.sslSocketFactory(socketFactory, new HttpsUtils.UnSafeTrustManager());
         }
         OkHttpClient okHttpClient = builder
                 .build();
