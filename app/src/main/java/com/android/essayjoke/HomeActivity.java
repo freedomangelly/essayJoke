@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.android.baselibrary.http.HttpUtils;
 import com.android.baselibrary.ioc.OnClick;
+import com.android.baselibrary.ioc.PermissionFail;
 import com.android.essayjoke.fragment.FindFragment;
 import com.android.essayjoke.fragment.FragmentManagerHelper;
 import com.android.essayjoke.fragment.HomeFragment;
@@ -58,7 +59,8 @@ public class HomeActivity extends BaseSkipActivity {
 
     @Override
     public void initListener() {
-        startActivity(new Intent(HomeActivity.this,TestImageActivity.class));
+//        startActivity(new Intent(HomeActivity.this,TestImageActivity.class));
+        startActivity(new Intent(HomeActivity.this, TestPermission.class));
     }
 
     @OnClick(R.id.home_rb)

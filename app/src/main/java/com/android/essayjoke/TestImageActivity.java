@@ -3,11 +3,13 @@ package com.android.essayjoke;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
 import com.android.essayjoke.utils.ImageUtil;
+import com.android.essayjoke.utils.PatchUtils;
 import com.android.fragmentlibrary.BaseSkipActivity;
 import com.android.fragmentlibrary.selectimage.ImageSelector;
 import com.android.fragmentlibrary.selectimage.SelectImageActivity;
@@ -24,9 +26,27 @@ import java.util.ArrayList;
 public class TestImageActivity extends BaseSkipActivity {
     private ArrayList<String> mImageList;
     private int SELECT_IMAGE_REQUEST=0x0011;
+
+    String patch_path=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"version_1.0_2.0.patch";
+    String mNewApkPath=Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"version2.0.apk";
     @Override
     public void initData() {
+        //1.访问后台接口，需不需要更新版本
 
+        //2.需要更新版本，那么提示用户需要下载，直接下载，然后提示用户更新
+        //耗时处理 Handler  AsyncTask RxJava
+        //本地apk路径怎么来，已经安装了1.0
+        PatchUtils.combine(getPackageResourcePath(),mNewApkPath,patch_path);
+
+        //下载完差分包后，调用我们的方法合并生成新apk
+        //https://github.com/curasystems/bsdiff-win生成差分包
+
+        //需要校验签名
+
+        //5安装最新版本(网上搜索)
+        Intent intent=new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(new File(mNewApkPath)),"application/vnd.android.package-archive");
+        startActivity(intent);
     }
 
     @Override

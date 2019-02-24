@@ -61,5 +61,5 @@ dependencies {
     implementation 'com.alipay.euler:andfix:0.5.0@aar'
     implementation 'com.google.code.gson:gson:2.8.5'
     //图片加载
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
 }
